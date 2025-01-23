@@ -1,5 +1,5 @@
 'use strict';
-console.log('Riya Kinny')
+
 const _ = require('lodash');
 
 const meta = require('../meta');

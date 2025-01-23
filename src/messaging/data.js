@@ -45,7 +45,6 @@ module.exports = function (Messaging) {
 	};
 
 	Messaging.getMessagesData = async (mids, uid, roomId, isNew) => {
-		console.log('Riya Kinny')
 		let messages = await Messaging.getMessagesFields(mids, []);
 		messages = messages
 			.map((msg, idx) => {
@@ -79,7 +78,7 @@ module.exports = function (Messaging) {
 		await parseMessages(messages, uid, roomId, isNew);
 
 		if (messages.length > 1) {
-			console.log('Riya Kinny')
+			console.log('**********Riya Kinny**********');
 			messages = messages.map((message, index) => {
 				if (index > 0 && shouldCreateNewSet(message, messages[index - 1])) {
 					message.newSet = true;
@@ -87,7 +86,7 @@ module.exports = function (Messaging) {
 				return message;
 			});
 		} else if (messages.length === 1) {
-			console.log('Riya Kinny')
+			console.log('**********Riya Kinny**********');
 			const key = `chat:room:${roomId}:mids`;
 			const index = await db.sortedSetRank(key, messages[0].messageId);
 			if (index > 0) {
@@ -114,8 +113,8 @@ module.exports = function (Messaging) {
 		return data && data.messages;
 	};
 
-	console.log('Riya Kinny')
 	function shouldCreateNewSet(current, previous) {
+		console.log('**********Riya Kinny**********');
 		return (
 			current.timestamp > previous.timestamp + Messaging.newMessageCutoff ||
 			current.fromuid !== previous.fromuid ||
