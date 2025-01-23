@@ -1,4 +1,5 @@
-"use strict";
+// used Chat GPT to update the code to address both warnings
+'use strict';
 
 define('forum/account/edit', [
 	'forum/account/header',
@@ -11,7 +12,7 @@ define('forum/account/edit', [
 	'admin/modules/change-email',
 ], function (dependencies) {
 	const {
-		header, picture, translator, api, hooks, bootbox, alerts, changeEmail
+		header, picture, translator, api, hooks, bootbox, alerts, changeEmail,
 	} = dependencies;
 
 	const AccountEdit = {};
