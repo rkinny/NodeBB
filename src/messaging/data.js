@@ -45,6 +45,7 @@ module.exports = function (Messaging) {
 	};
 
 	Messaging.getMessagesData = async (mids, uid, roomId, isNew) => {
+		console.log('Riya Kinny')
 		let messages = await Messaging.getMessagesFields(mids, []);
 		messages = messages
 			.map((msg, idx) => {
@@ -56,6 +57,7 @@ module.exports = function (Messaging) {
 				return msg;
 			})
 			.filter(Boolean);
+
 		messages = await user.blocks.filter(uid, 'fromuid', messages);
 		const users = await user.getUsersFields(
 			messages.map(msg => msg && msg.fromuid),
@@ -77,34 +79,21 @@ module.exports = function (Messaging) {
 		await parseMessages(messages, uid, roomId, isNew);
 
 		if (messages.length > 1) {
-			// Add a spacer in between messages with time gaps between them
+			console.log('Riya Kinny')
 			messages = messages.map((message, index) => {
-				// Compare timestamps with the previous message, and check if a spacer needs to be added
-				if (index > 0 && message.timestamp > messages[index - 1].timestamp + Messaging.newMessageCutoff) {
-					// If it's been 5 minutes, this is a new set of messages
-					message.newSet = true;
-				} else if (index > 0 && message.fromuid !== messages[index - 1].fromuid) {
-					// If the previous message was from the other person, this is also a new set
-					message.newSet = true;
-				} else if (index > 0 && messages[index - 1].system) {
-					message.newSet = true;
-				} else if (index === 0 || message.toMid) {
+				if (index > 0 && shouldCreateNewSet(message, messages[index - 1])) {
 					message.newSet = true;
 				}
-
 				return message;
 			});
 		} else if (messages.length === 1) {
-			// For single messages, we don't know the context, so look up the previous message and compare
+			console.log('Riya Kinny')
 			const key = `chat:room:${roomId}:mids`;
 			const index = await db.sortedSetRank(key, messages[0].messageId);
 			if (index > 0) {
 				const mid = await db.getSortedSetRange(key, index - 1, index - 1);
 				const fields = await Messaging.getMessageFields(mid, ['fromuid', 'timestamp']);
-				if ((messages[0].timestamp > fields.timestamp + Messaging.newMessageCutoff) ||
-					(messages[0].fromuid !== fields.fromuid) ||
-					messages[0].system || messages[0].toMid) {
-					// If it's been 5 minutes, this is a new set of messages
+				if (shouldCreateNewSet(messages[0], fields)) {
 					messages[0].newSet = true;
 				}
 			} else {
@@ -124,6 +113,16 @@ module.exports = function (Messaging) {
 
 		return data && data.messages;
 	};
+
+	console.log('Riya Kinny')
+	function shouldCreateNewSet(current, previous) {
+		return (
+			current.timestamp > previous.timestamp + Messaging.newMessageCutoff ||
+			current.fromuid !== previous.fromuid ||
+			previous.system ||
+			current.toMid
+		);
+	}
 
 	async function addParentMessages(messages, uid, roomId) {
 		let parentMids = messages.map(msg => (msg && msg.hasOwnProperty('toMid') ? parseInt(msg.toMid, 10) : null)).filter(Boolean);
@@ -182,6 +181,7 @@ module.exports = function (Messaging) {
 			msg.content = await parseMessage(msg, uid, roomId, isNew);
 		}));
 	}
+
 	async function parseMessage(message, uid, roomId, isNew) {
 		if (message.system) {
 			return validator.escape(String(message.content));

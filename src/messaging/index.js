@@ -1,5 +1,5 @@
 'use strict';
-
+console.log('index page')
 const _ = require('lodash');
 const validator = require('validator');
 const nconf = require('nconf');

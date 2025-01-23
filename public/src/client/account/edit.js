@@ -1,4 +1,5 @@
 // used Chat GPT to update the code to address both warnings
+
 'use strict';
 
 define('forum/account/edit', [
