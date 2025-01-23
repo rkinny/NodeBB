@@ -9,7 +9,11 @@ define('forum/account/edit', [
 	'bootbox',
 	'alerts',
 	'admin/modules/change-email',
-], function (header, picture, translator, api, hooks, bootbox, alerts, changeEmail) {
+], function (dependencies) {
+	const {
+		header, picture, translator, api, hooks, bootbox, alerts, changeEmail
+	} = dependencies;
+
 	const AccountEdit = {};
 
 	AccountEdit.init = function () {
